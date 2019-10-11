@@ -7,6 +7,7 @@
 //= require jquery-zoom/jquery.zoom
 //= require custom
 //= require direct_uploads
+//= require filepond/dist/filepond
 //= require google_maps
 //= require styleguide
 //= require_directory ./vues/
