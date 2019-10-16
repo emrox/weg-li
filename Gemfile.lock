@@ -72,6 +72,10 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
       zeitwerk (~> 2.1, >= 2.1.8)
+    acts_as_api (1.0.1)
+      activemodel (>= 3.0.0)
+      activesupport (>= 3.0.0)
+      rack (>= 1.1.0)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
     administrate-field-active_storage (0.2.0)
@@ -79,6 +83,9 @@ GEM
       rails (>= 6.0)
     autoprefixer-rails (9.6.4)
       execjs
+    barnes (0.0.7)
+      multi_json (~> 1)
+      statsd-ruby (~> 1.1)
     bindex (0.8.1)
     bitfields (0.12.0)
       activerecord (>= 5.1)
@@ -370,6 +377,7 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    statsd-ruby (1.4.0)
     temple (0.8.2)
     thor (0.20.3)
     thread_safe (0.3.6)
@@ -411,8 +419,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  acts_as_api
   administrate!
   administrate-field-active_storage
+  barnes
   bitfields
   byebug
   color

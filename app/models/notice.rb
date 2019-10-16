@@ -14,12 +14,11 @@ class Notice < ActiveRecord::Base
   before_validation :defaults
 
   geocoded_by :full_address, language: Proc.new { |model| I18n.locale }, no_annotations: true
-  reverse_geocoded_by :latitude, :longitude, language: Proc.new { |model| I18n.locale }, no_annotations: true
   after_validation :geocode
 
   belongs_to :user
   belongs_to :district
-  belongs_to :bulk_upload
+  belongs_to :bulk_upload, optional: true
   has_many_attached :photos
 
   validates :photos, :registration, :charge, :street, :zip, :city, :date, presence: :true
@@ -30,6 +29,10 @@ class Notice < ActiveRecord::Base
   scope :since, -> (date) { where('notices.created_at > ?', date) }
   scope :destroyable, -> () { where.not(status: :shared) }
   scope :for_public, -> () { where.not(status: :disabled) }
+
+  def self.for_reminder
+    open.joins(:user).where(date: [(21.days.ago.beginning_of_day)..(14.days.ago.end_of_day)]).merge(User.not_disable_reminders)
+  end
 
   def self.from_param(token)
     find_by_token!(token)
@@ -99,16 +102,6 @@ class Notice < ActiveRecord::Base
     super || (address || '')[ADDRESS_ZIP_PATTERN, 1]
   end
 
-  def prefill_address_fields
-    return unless address?
-
-    address.gsub(/,?\s*(Deutschland|Germany)/, '').match(/(.+?),?\s*(\d{5}),?\s*(.+)/)
-
-    self.street = $1&.strip
-    self.zip = $2&.strip
-    self.city = $3&.strip || user.city
-  end
-
   def meta
     photos.map(&:metadata).to_json
   end
@@ -133,7 +126,7 @@ class Notice < ActiveRecord::Base
   end
 
   def full_address
-    [street, zip, city].compact.join(' ')
+    "#{street}, #{zip} #{city}, Deutschland"
   end
 
   def map_data
